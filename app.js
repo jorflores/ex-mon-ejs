@@ -32,6 +32,7 @@ app.use(express.urlencoded({extended:false}));
 // routes
 app.use('/', indexRoutes);
 
+
 app.listen(app.get('port'), () =>{
     console.log(`server on port ${app.get('port')}`);
 })

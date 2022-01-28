@@ -43,6 +43,27 @@
 
 <!--  TABLA CON LOS DATOS-->
 
+<% for (let i = 0; i<tasks.length;i++) { %>
+<tr>
+
+  <td><%= i+1 %> </td>
+  <td><strong><%= tasks[i].title %></strong></td>
+  <td><%= tasks[i].description %></td>
+  <td>
+
+   <a href="/turn/<%= tasks[i]._id %>" class="<%= tasks[i].status ? 'btn btn-success' : 'btn btn-dark' %>   " >Done</a>
+   <a href="/delete/<%= tasks[i]._id %>" class="btn btn-danger"  >Delete</a>
+   <a href="/edit/<%= tasks[i]._id %>" class="btn btn-info">Edit</a>
+
+  </td>
+
+
+</tr>
+
+
+  <% } %>
+
+
     </tbody>
 </table>
 
