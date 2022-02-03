@@ -9,23 +9,27 @@ let jwt = require("jsonwebtoken")
 // Nos regresaria las tareas guardadas en la BD con el método find(). Una vez obtenidas las tareas las regresamos a la pagina principal.
 router.get('/', verify,  async function(req,res){
 
-  let tasks = await Task.find()
+  console.log(req.userId)
+  let tasks = await Task.find({user_id: req.userId})
   console.log(tasks)
 
 res.render('index', {tasks})
 });
 
 // Ruta que nos permita agregar nuevas tareas que vienen desde un metodo post. Una vez enviada la tarea podemos redireccionar a la pagina principal con res.redirect('/')
-router.post('/add', async (req,res) =>{
+router.post('/add',verify, async (req,res) =>{
+
 
  let task = new Task(req.body)
+ task.user_id = req.userId
+ console.log(task)
  await  task.save()
  res.redirect('/')
 });
 
 // Ruta para editar los datos. Primero necesitamos buscarlos en base a un id que ya me llega desde la ruta. Metodo de busqueda findById(). 
 // Los editaremos en una pagina aparte llamada 'edit'
-router.get('/edit/:id',   async(req,res) =>{
+router.get('/edit/:id', verify,   async(req,res) =>{
 
   let id = req.params.id
   let task  = await Task.findById(id)
@@ -35,7 +39,7 @@ router.get('/edit/:id',   async(req,res) =>{
 
 
 // Ruta para efectuar la actualizacion de los datos utilizando el metodo update()
-router.post('/edit/:id',   async(req,res) =>{
+router.post('/edit/:id',verify,   async(req,res) =>{
 
   /*let task = await Task.findById(req.params.id)
   task.title = req.body.title
@@ -49,7 +53,7 @@ router.post('/edit/:id',   async(req,res) =>{
 
 // Esta ruta permita modificar el estatus de una tarea por medio de su propiedad status. 
 // Necesitamos buscar el task en la BD por medio de findById, una vez encontrado el registro hay que modificar el status y guardar con save(). 
-router.get('/turn/:id', async (req, res, next) => {
+router.get('/turn/:id', verify,async (req, res, next) => {
 
 let id = req.params.id
 let task = await Task.findById(id)
@@ -60,7 +64,7 @@ res.redirect('/')
   });
 
 // Ruta que nos permita eliminar tareas con el método "deleteOne"
-router.get('/delete/:id',  async (req,res) =>{
+router.get('/delete/:id',verify,  async (req,res) =>{
 
   let id = req.params.id
   await Task.remove({_id:id})
@@ -86,16 +90,16 @@ if (!user) {
   res.redirect('/login')
 }
 
-// si existe
+// si existe verificamos la contraseña
 else {
 
   let valid = await bcrypt.compareSync(plainpassword,user.password)
 
   if (valid){
 
-    let token = jwt.sign({},process.env.SECRET, {expiresIn:"1h"});
+    let token = jwt.sign({id:user.email},process.env.SECRET, {expiresIn:"1h"});
     console.log(token)
-
+    res.cookie("token", token,{httpOnly:true})
     res.redirect("/")
   }
 
@@ -130,6 +134,9 @@ res.redirect('/login')
 
 })
 
-  
+router.get("/logoff", (req,res)=> {
+  res.clearCookie("token")
+  res.redirect("/")
+})
 
 module.exports = router;

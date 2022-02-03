@@ -7,7 +7,8 @@ const TaskSchema = Schema({
     status: {
         type: Boolean ,
         default: false
-    }
+    },
+    user_id: String
 })
 
 module.exports = mongoose.model('tasks',TaskSchema)
