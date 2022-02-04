@@ -5,6 +5,7 @@ const User = require('../model/user');
 let verify = require('../middleware/verifyAccess')
 let bcrypt = require("bcrypt")
 let jwt = require("jsonwebtoken")
+let flash = require("connect-flash")
 
 // Nos regresaria las tareas guardadas en la BD con el método find(). Una vez obtenidas las tareas las regresamos a la pagina principal.
 router.get('/', verify,  async function(req,res){
@@ -74,7 +75,7 @@ router.get('/delete/:id',verify,  async (req,res) =>{
 
 router.get('/login', async function(req,res){
 
-res.render('login')
+res.render('login', {messages: req.flash('info')})
 });
 
 
@@ -87,6 +88,7 @@ let user = await User.findOne({email: email})
 
 // si no existe
 if (!user) {
+  req.flash('info', 'El usuario no existe')
   res.redirect('/login')
 }
 
@@ -104,6 +106,7 @@ else {
   }
 
   else {
+    req.flash('info', 'La contraseña es invalida')
     res.redirect("/login")
   }
 
@@ -116,13 +119,17 @@ else {
 
 router.get('/register', async function(req,res){
 
-  res.render('register')
+  res.render('register', {messages: req.flash('info')})
   });
 
 
 router.post('/addUser', async (req,res) => {
 
 let user = new User (req.body)
+
+let exists = User.findOne({user_id: user.email})
+
+if (!exists) {
 
 // Hash a la contraseña
 
@@ -131,6 +138,11 @@ user.password = bcrypt.hashSync(user.password,10)
 await user.save()
 
 res.redirect('/login')
+}
+else {
+  req.flash('info', 'El usuario ya existe')
+  res.redirect('/register')
+}
 
 })
 

@@ -10,7 +10,7 @@
     <title>Signin Template for Bootstrap</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
-
+    <script src="https://code.jquery.com/jquery.js"></script>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
@@ -31,8 +31,17 @@
 
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 
+      <br>
+      <% if (messages.length > 0) { %>
+        
+        <p class="alert alert-warning" > <%= messages %>  </p>
+        <script> $('.alert-warning').delay(5000).fadeOut('slow');       </script>
+        <% }  %> 
     </form>
 
 
+
+
+      
   </body>
 </html>

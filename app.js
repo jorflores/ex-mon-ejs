@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 let dotenv = require("dotenv");
 let cookieParser = require("cookie-parser")
+let flash =require("connect-flash")
+let session = require("express-session")
 
 dotenv.config();
 
@@ -30,6 +32,13 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({extended:false}));
 app.use(cookieParser())
 app.use(express.static('public'));
+app.use(flash());
+app.use(session({
+    secret: 'myscret',
+    resave: false,
+    saveUninitialized:false
+}))
+
 
 
 // routes
