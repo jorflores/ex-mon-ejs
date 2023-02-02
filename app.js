@@ -5,6 +5,7 @@ let dotenv = require("dotenv");
 let cookieParser = require("cookie-parser")
 let flash =require("connect-flash")
 let session = require("express-session")
+let path = require("path")
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ const indexRoutes = require('./routes/routeindex');
 
 // settings
 app.set('port', process.env.PORT || 3000);
-app.set('views',__dirname);
+app.set('views',path.join(__dirname, "views"));
 app.set('view engine', 'ejs');
 
 // middlewares
