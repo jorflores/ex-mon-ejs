@@ -126,8 +126,10 @@ router.get('/register', async function(req,res){
 router.post('/addUser', async (req,res) => {
 
 let user = new User (req.body)
-
-let exists = User.findOne({user_id: user.email})
+console.log(user)
+console.log({email: user.email})
+let exists = await User.findOne({email: user.email})
+console.log(exists)
 
 if (!exists) {
 
